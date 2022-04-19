@@ -4,6 +4,7 @@ import auth from '../../../firebase.init'
 import { Link, useNavigate } from 'react-router-dom';
 import './Register.css'
 import SocialLogin from '../SocialLogin/SocialLogin';
+import { Spinner } from 'react-bootstrap';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -30,14 +31,15 @@ const Register = () => {
 
         await createUserWithEmailAndPassword(email, password);
         await updateProfile({ displayName: name });
+
         //condition for login user
         navigate('/home');
-
     }
 
-    if (user) {
-        console.log(user);
-    }
+    if (loading || updating) {
+        return  <Spinner animation="grow" variant="dark" />
+
+        }
 
     return (
         <div className='pt-3 w-50 m-auto'>

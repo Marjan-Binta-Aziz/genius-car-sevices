@@ -1,9 +1,14 @@
 import React, { useRef } from "react";
-import { Button, Form } from "react-bootstrap";
-import { useSignInWithEmailAndPassword ,useSendPasswordResetEmail} from "react-firebase-hooks/auth";
+import { Button, Form, Spinner } from "react-bootstrap";
+import {
+  useSignInWithEmailAndPassword,
+  useSendPasswordResetEmail,
+} from "react-firebase-hooks/auth";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
 import SocialLogin from "../SocialLogin/SocialLogin";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const Login = () => {
   //use for another way to get mail and pass like handleEmailBlur
@@ -16,11 +21,17 @@ const Login = () => {
   const navigate = useNavigate();
 
   //for login to firebase
-  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] =
+    useSignInWithEmailAndPassword(auth);
 
-  const [sendPasswordResetEmail, sending, error1] = useSendPasswordResetEmail(auth);
+  const [sendPasswordResetEmail, sending, error1] =
+    useSendPasswordResetEmail(auth);
 
   let errorElement;
+
+  if (loading || sending) {
+    return <Spinner animation="grow" variant="dark" />;
+  }
 
   if (error) {
     errorElement = (
@@ -39,12 +50,19 @@ const Login = () => {
     navigate("/register");
   };
 
-  const resetPassword = async() => {
-    const email = emailRef.current.value;
-    await sendPasswordResetEmail(email);
-    alert('Sent email');
-  };
+  const resetPassword = async () => {
+  const email = emailRef.current.value;
+    if(email){
 
+    await sendPasswordResetEmail(email);
+    toast("Sent email");
+    }
+    else{
+      toast('There is no email address')
+    }
+    
+  };
+  
   //condition for in user login
   if (user) {
     navigate(from, { replace: true });
@@ -92,15 +110,15 @@ const Login = () => {
       </p>
       <p className="mt-4">
         Forget Password ?{" "}
-        <Link
-          to="/register"
+        <button 
           onClick={resetPassword}
-          className="text-danger text-decoration-none"
+          className="btn btn-link text-danger text-decoration-none"
         >
           Reset Password
-        </Link>
+        </button>
       </p>
       <SocialLogin></SocialLogin>
+      <ToastContainer></ToastContainer>
     </div>
   );
 };
