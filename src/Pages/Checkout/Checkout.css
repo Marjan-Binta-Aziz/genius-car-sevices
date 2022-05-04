@@ -1,0 +1,13 @@
+.checkout-container{
+    text-align: center;
+}
+.checkout-container input{
+    border: 1;
+    margin: 10px;
+    width: 100%;
+}
+.form-link{
+    margin-top: 10px;
+    text-align: center;
+
+}

@@ -1,15 +1,19 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import useServices from "../../hooks/useServices";
 
-const AddService = () => {
+const UpdateService = () => {
+  const { _id } = useParams();
+  const [service] = useServices({});
   const { register, handleSubmit } = useForm();
   const onSubmit = (data) => {
     console.log(data);
 
-    const url = `https://still-gorge-05300.herokuapp.com/service`;
+    const url = `https://still-gorge-05300.herokuapp.com/service/${_id}`;
+    console.log(_id);
     fetch(url, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "content-type": "application/json",
       },
@@ -18,16 +22,12 @@ const AddService = () => {
       .then((res) => res.json())
       .then((result) => {
         console.log(result);
-        toast('Your Service is added');
-        // data.reset();
       });
-    
-      
   };
 
   return (
     <div className="w-50 text-center m-auto pt-4">
-      <h2>Add Services</h2>
+      <h2>Update Services {service.id}</h2>
       <form className="d-flex flex-column" onSubmit={handleSubmit(onSubmit)}>
         <input
           className="mb-2"
@@ -58,11 +58,11 @@ const AddService = () => {
         <input
           className="mb-2 btn btn-outline-dark w-25 text-center"
           type="submit"
-          value="Add Service"
+          value="Update"
         />
       </form>
     </div>
   );
 };
 
-export default AddService;
+export default UpdateService;

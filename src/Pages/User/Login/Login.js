@@ -8,7 +8,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import auth from "../../../firebase.init";
 import SocialLogin from "../SocialLogin/SocialLogin";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = () => {
   //use for another way to get mail and pass like handleEmailBlur
@@ -39,11 +40,19 @@ const Login = () => {
     );
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const email = emailRef.current.value;
     const password = PasswordRef.current.value;
-    signInWithEmailAndPassword(email, password);
+    await signInWithEmailAndPassword(email, password);
+
+    const { data } = await axios.post(
+      "https://still-gorge-05300.herokuapp.com/login",
+      { email }
+    );
+    console.log(data);
+    localStorage.setItem("accessToken", data.accessToken);
+    navigate(from, { replace: true });
   };
 
   const navigateRegister = () => {
@@ -51,21 +60,18 @@ const Login = () => {
   };
 
   const resetPassword = async () => {
-  const email = emailRef.current.value;
-    if(email){
-
-    await sendPasswordResetEmail(email);
-    toast("Sent email");
+    const email = emailRef.current.value;
+    if (email) {
+      await sendPasswordResetEmail(email);
+      toast("Sent email");
+    } else {
+      toast("There is no email address");
     }
-    else{
-      toast('There is no email address')
-    }
-    
   };
-  
+
   //condition for in user login
   if (user) {
-    navigate(from, { replace: true });
+    // navigate(from, { replace: true });
   }
 
   return (
@@ -110,7 +116,7 @@ const Login = () => {
       </p>
       <p className="mt-4">
         Forget Password ?{" "}
-        <button 
+        <button
           onClick={resetPassword}
           className="btn btn-link text-danger text-decoration-none"
         >
@@ -118,7 +124,6 @@ const Login = () => {
         </button>
       </p>
       <SocialLogin></SocialLogin>
-      <ToastContainer></ToastContainer>
     </div>
   );
 };

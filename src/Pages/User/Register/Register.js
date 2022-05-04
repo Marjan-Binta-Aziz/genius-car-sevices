@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useCreateUserWithEmailAndPassword,useUpdateProfile } from 'react-firebase-hooks/auth';
 import auth from '../../../firebase.init'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Register.css'
 import SocialLogin from '../SocialLogin/SocialLogin';
 import { Spinner } from 'react-bootstrap';
 
 const Register = () => {
-    const navigate = useNavigate();
-
     const [agree, setAgree] = useState(false);
+
+      //for go to ager page jekhan theke ai page e aschilo
+        const navigate = useNavigate();
+        const location = useLocation();
+        const from = location.state?.from?.pathname || "/";
+
 
     //update user name
     const [updateProfile, updating, updateError] = useUpdateProfile(auth);
@@ -31,14 +35,14 @@ const Register = () => {
 
         await createUserWithEmailAndPassword(email, password);
         await updateProfile({ displayName: name });
-
-        //condition for login user
-        navigate('/home');
     }
 
     if (loading || updating) {
         return  <Spinner animation="grow" variant="dark" />
 
+        }
+        if(user){
+            navigate(from, { replace: true });
         }
 
     return (
